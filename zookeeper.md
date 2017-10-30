@@ -15,7 +15,8 @@ tar zxf zookeeper-3.4.9.tar.gz
 - 修改配置
 将${zookeeper.home}/conf/zoo_sample.cfg文件拷贝一份，命名为zoo.cfg
 修改zoo.cfg内容为:
-```
+
+```shell
 # The number of milliseconds of each tick
 tickTime=2000
 # The number of ticks that the initial 
@@ -84,4 +85,3 @@ export PATH
 #启动客户端脚本
 /app/zookeeper-3.4.9/bin/zkCli.sh -server 10.128.91.191:2181
 ```
-
