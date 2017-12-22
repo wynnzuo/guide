@@ -2,6 +2,23 @@
 v0.1
 
 此Guide为工作中，对于各种技术实际的运用形成文档记录。包含安装，配置，运维等方面。对于后期的运营维护，以及新同事加入带来极大的好处。
+
+
+## 目录结构
+- [Solr6.6.2集群安装配置](solr/README.md)
+
+  - [Solr开发人员手册](solr/develop.md)
+  - [Solr配置说明](solr/config.md)
+  - [Solr运维说明](solr/operation.md)
+
+- [zookepper安装配置](zookeeper.md)
+
+- [软件开发流程规范](devManuals/README.md)
+    - [前端开发规范](devManuals/web.md)
+    - [数据库开发规范](devManuals/db.md)
+    - [java开发规范](devManuals/java.md)
+    - [接口开发规范](devManuals/interface.md)
+
 ## 介绍
 
 Most Popular Linux Install Guides
