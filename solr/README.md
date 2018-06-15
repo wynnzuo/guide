@@ -22,7 +22,7 @@
 
   ### 集群架构
 
-  ![image](http://images2015.cnblogs.com/blog/855612/201702/855612-20170206211846307-1231965985.png)
+  ![集群架构](855612-20170206211846307-1231965985.png)
 
 ## zookeeper集群安装
 
@@ -140,7 +140,6 @@ cp /app/solr-6.6.2/server/solr/solr.xml /app/solr_home/node
 > <int name="hostPort">${jetty.port:8983}</int>
 
 #### jar包准备
-
 ```
 cp ${solr.home}/contrib/extraction/lib/* ${solr.home}/server/solr-webapp/webapp/WEB-INF/lib
 cp ${solr.home}/dist/solrj-lib/noggit-0.6.jar ${solr.home}/server/solr-webapp/webapp/WEB-INF/lib
@@ -243,4 +242,88 @@ curl "http://10.128.91.191:8983/solr/admin/collections?action=RELOAD&name=appkms
  [zookeeper集群安装]: ../zookeeper.md
 
  [Oracle JDBC Drivers]: http://www.oracle.com/technetwork/database/features/jdbc/index-091264.html
+
+#### 定时自动增量导入配置
+##### 下载Jar
+
+ 下载apache-solr-dataimportscheduler-1.1.jar包
+
+```
+cp apache-solr-dataimportscheduler-1.1.jar ${solr.home}/server/solr-webapp/webapp/WEB-INF/lib
+```
+##### 修改web.xml
+
+修改${solr.home}/server/solr-webapp/webapp/WEB-INF/web.xml,添加如下配置：
+
+```xml
+<listener>
+    <listener-class>org.apache.solr.handler.dataimport.scheduler.ApplicationListener</listener-class>
+</listener>
+```
+
+##### 修改时区为东8区
+修改${solr.home}/bin/solr.in.sh，添加`﻿SOLR_TIMEZONE="UTC+8"`
+
+##### dataimport.properties
+
+在solr_home下(`启动命令的 -s参数`，
+
+eg: bin/solr start -cloud -m 4g -p 8983 -s `"/app/solr_home/node" `),创建`conf`目录，
+并添加文件`dataimport.properties'，文件具体内容如下：
+
+```
+#################################################
+#                                               #
+#       dataimport scheduler properties         #
+#                                               #
+#################################################
+
+#  to sync or not to sync
+#  1 - active; anything else - inactive
+syncEnabled=1
+
+#  which cores to schedule
+#  in a multi-core environment you can decide which cores you want syncronized
+#  leave empty or comment it out if using single-core deployment
+# syncCores=game,resource #因为我的是single-core，所以注释掉了，默认就是collection1
+syncCores=addressUser
+#,appkmsContent,appkmsQuestion,appkmsTipOff
+#  solr server name or IP address
+#  [defaults to localhost if empty]
+server=localhost
+
+#  solr server port
+#  [defaults to 80 if empty]
+port=8983
+#  application name/context
+#  [defaults to current ServletContextListener's context (app) name]
+webapp=solr
+#  URL params [mandatory]
+#  remainder of URL
+#  增量更新的请求参数
+params=/dataimport?command=delta-import&clean=true&commit=true
+#  schedule interval
+#  number of minutes between two runs
+#  [defaults to 30 if empty]
+#  这里配置的是2min一次
+interval=2
+#  重做索引的时间间隔，单位分钟，默认7200，即5天;
+#  为空,为0,或者注释掉:表示永不重做索引
+reBuildIndexInterval=7200
+#  重做索引的参数
+reBuildIndexParams=/dataimport?command=full-import&clean=true&commit=true
+#  重做索引时间间隔的计时开始时间，第一次真正执行的时间=reBuildIndexBeginTime+reBuildIndexInterval*60*1000；
+#  两种格式：2012-04-11 03:10:00 或者  03:10:00，后一种会自动补全日期部分为服务启动时的日期
+reBuildIndexBeginTime=03:10:00
+
+```
+
+##### 在Collection的conf目录下,添加文件`dataimport.properties`
+
+```
+#Fri Nov 10 10:10:24 UTC 2017
+item.last_index_time=2018-06-10 10\:10\:23
+last_index_time=2018-06-10 10\:10\:23
+stackoverflow.last_index_time=2018-06-10 10\:10\:23
+```
 
