@@ -327,3 +327,86 @@ last_index_time=2018-06-10 10\:10\:23
 stackoverflow.last_index_time=2018-06-10 10\:10\:23
 ```
 
+#### 更新db-data-config.xml
+下面是`Collection`为`enterpriseAddressBook` ，数据同步配置。
+重点见`pk="USER_ID"`， `deltaQuery`，`deltaImportQuery`。
+
+```xml
+<entity name="item"  pk="USER_ID"
+      query="
+      select t.user_id,t.user_name,
+             t.provinceid,t.phone, t.email,
+             t.address,
+             decode(n.portrait_url, '', t.portrait_url, n.portrait_url) userPic,
+             t.dep_id,t.USERWORK,
+             t.USERTERRITORY,p.pos_name,
+             t.position_type,t.quanpin,t.shouzimu,
+             t.hytaccount,t.crmaccount,t.flagonline,
+             t.sort_num,t.order_num,t.install
+        from appuser.address_user t
+        left join appuser.address_position p
+          on (t.pos_id = p.pos_id)
+        left join appuser.address_user_new n
+          on n.user_id = t.user_id
+       where not exists (select 1
+                from appuser.address_blacklist a
+               where a.user_id = t.user_id)
+      ORDER BY t.user_id
+      "
+      deltaQuery="select user_id
+      from appuser.address_user t
+      left join appuser.address_position p
+        on (t.pos_id = p.pos_id)
+      left join appuser.address_user_new n
+        on n.user_id = t.user_id
+      where not exists (select 1
+              from appuser.address_blacklist a
+             where a.user_id = t.user_id)
+      and t.update_date > TO_DATE('${dataimporter.last_index_time}','yyyy-mm-ddhh24:mi:ss')"
+
+      deltaImportQuery="
+      select t.user_id,t.user_name,
+             t.provinceid,t.phone, t.email,
+             t.address,
+             decode(n.portrait_url, '', t.portrait_url, n.portrait_url) userPic,
+             t.dep_id,t.USERWORK,
+             t.USERTERRITORY,p.pos_name,
+             t.position_type,t.quanpin,t.shouzimu,
+             t.hytaccount,t.crmaccount,t.flagonline,
+             t.sort_num,t.order_num,t.install
+             from appuser.address_user t
+             left join appuser.address_position p
+               on (t.pos_id = p.pos_id)
+             left join appuser.address_user_new n
+               on n.user_id = t.user_id
+       where t.USER_ID='${dih.delta.USER_ID}'">
+      <field column="USER_ID" name="userID"/>
+      <field column="USER_NAME" name="username"/>
+      <field column="PROVINCEID" name="provinceID"/>
+      <field column="PHONE" name="phone"/>
+      <field column="EMAIL" name="email"/>
+      <field column="ADDRESS" name="address"/>
+      <field column="USERPIC" name="userPic"/>
+      <field column="DEP_ID" name="organizationID"/>
+      <field column="USERWORK" name="context"/>
+      <field column="USERTERRITORY" name="field"/>
+      <field column="POS_NAME" name="post"/>
+      <field column="POSITION_TYPE" name="depType"/>
+      <field column="QUANPIN" name="quanPin"/>
+      <field column="SHOUZIMU" name="shouZiMu"/>
+      <field column="HYTACCOUNT" name="hytAccount"/>
+      <field column="CRMACCOUNT" name="crmAccount"/>
+      <field column="FLAGONLINE" name="flagOnline"/>
+      <field column="SORT_NUM" name="sortNum"/>
+      <field column="ORDER_NUM" name="orderNum"/>
+      <field column="INSTALL" name="install"/>
+    </entity>
+```
+
+意思是首先按照query指定的SQL语句查询出符合条件的记录。
+
+然后从这些数据中根据deltaQuery指定的SQL语句查询出所有需要增量导入的数据的ID号。
+
+最后根据deltaImportQuery指定的SQL语句返回所有这些ID的数据，即为这次增量导入所要处理的数据。
+
+核心思想是：通过内置变量“${dih.delta.USER_ID}”和 “${dataimporter.last_index_time}”来记录本次要索引的id和最近一次索引的时间。
