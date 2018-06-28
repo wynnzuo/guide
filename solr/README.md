@@ -301,7 +301,7 @@ webapp=solr
 #  URL params [mandatory]
 #  remainder of URL
 #  增量更新的请求参数
-params=/dataimport?command=delta-import&clean=true&commit=true
+params=/dataimport?command=delta-import&clean=false&commit=true
 #  schedule interval
 #  number of minutes between two runs
 #  [defaults to 30 if empty]
