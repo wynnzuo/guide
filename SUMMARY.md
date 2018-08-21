@@ -5,6 +5,7 @@
   - [Solr运维说明](solr/operation.md)
 
 - [zookepper安装配置](zookeeper.md)
+- [vsftp安装配置](vsftp.md)
 
 - [软件开发流程规范](devManuals/README.md)
     - [前端开发规范](devManuals/web.md)
