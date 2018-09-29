@@ -43,7 +43,4 @@ Most Popular Linux Install Guides
     $ gitbook build  // 编译成网页
     $ gitbook pdf    // 编译成 pdf
 
-### 纠错
-
-欢迎大家指出不足，如有任何疑问，请邮件联系 yaloo_yang@189.cn 或者直接修复并提交 Pull Request。
 
