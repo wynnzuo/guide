@@ -10,7 +10,6 @@ v0.1
   - [Solr开发人员手册](solr/develop.md)
   - [Solr配置说明](solr/config.md)
   - [Solr运维说明](solr/operation.md)
-  - [solr](devManuals/README.md)
 
 - [zookepper安装配置](zookeeper.md)
 - [vsftp安装配置](vsftp.md)
@@ -36,7 +35,7 @@ Most Popular Linux Install Guides
 
 ### 下载
 
-    $ git clone http://42.99.16.145:19492/yaloo_yang/guide.git
+    $ git clone https://github.com/wynnzuo/guide.git
     $ cd guide/
 
 ### 编译
