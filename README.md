@@ -10,6 +10,7 @@ v0.1
   - [Solr开发人员手册](solr/develop.md)
   - [Solr配置说明](solr/config.md)
   - [Solr运维说明](solr/operation.md)
+  - solr(solr/operatio.md)
 
 - [zookepper安装配置](zookeeper.md)
 - [vsftp安装配置](vsftp.md)
